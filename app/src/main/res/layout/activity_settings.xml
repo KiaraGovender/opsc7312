@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Settings">
+
+    <LinearLayout
+        android:id="@+id/linearSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.158">
+
+        <TextView
+            android:id="@+id/tvGeneralSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="General Settings"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"></TextView>
+
+        <LinearLayout
+            android:id="@+id/linearUnits"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvUnitOfMeasurement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical|end"
+                android:text="Unit of measurement"
+                android:textColor="@color/black"
+                android:textSize="17dp" />
+
+            <Spinner
+                android:id="@+id/spinnerUnitsMeasuredSettings"
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical|end"
+                android:textColor="@color/black"
+                android:textSize="17dp">
+
+            </Spinner>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvMapSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Map Settings"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textStyle="bold"></TextView>
+
+        <LinearLayout
+            android:id="@+id/linearAlerts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/tvAlerts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_vertical|end"
+                android:text="Alerts"
+                android:textColor="@color/black"
+                android:textSize="17dp" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:checked="true"
+                android:text="Speed Cameras" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="50dp"
+                android:checked="true"
+                android:text="Speed Limits" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="50dp"
+                android:checked="true"
+                android:text="Traffic" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginStart="50dp"
+                android:checked="true"
+                android:text="Road Construction" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">OPSC7312Task2</string>
+    <!--token for mapbox api-->
+    <string name="access_token">pk.eyJ1Ijoia2lhcmFnb3ZlbmRlciIsImEiOiJja3BmZzVscWQwMzFlMm5tbDM1MDk3cjd1In0.1ZGjN0x12EqP4zIoFYlW2g</string>
+    <string name="welcome">Welcome!</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="log_in">Log In</string>
+    <string name="todo">TODO</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="menu_fragment">menu_fragment</string>
+    <string name="search">Search</string>
+    <string name="locations">Locations</string>
+    <string name="map">Map</string>
+    <string name="favourite">Favourite</string>
+    <string name="menu">Menu</string>
+    <string name="favourites">favourites</string>
+
+    <string-array name="unitsMeasured">
+        <item>Kilometers</item>
+        <item>Miles</item>
+    </string-array>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+</resources>
