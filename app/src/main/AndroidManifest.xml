@@ -11,7 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OPSC7312Task2.NoActionBar">
-        <activity android:name=".MapboxLive"/>
+        <activity android:name=".MapboxLive" />
         <activity android:name=".DownloadedMaps" />
         <activity android:name=".Settings" />
         <activity android:name=".Favorites" />
