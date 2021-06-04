@@ -32,8 +32,6 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
-
-
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
@@ -44,6 +42,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import android.view.View;
+import android.widget.Button;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+
 public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener
 {
     private MapView mapView;
@@ -51,7 +53,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     private Button startButton;
     private PermissionsManager permissionsManager;
     private LocationComponent locationComponent;
-
     private DirectionsRoute currentRoute;
     private static final String TAG = "DirectionsActivity";
     private NavigationMapRoute navigationMapRoute;
@@ -65,8 +66,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-
-
     }
 
     // mapbox methods
@@ -132,6 +131,20 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                         addDestinationIconSymbolLayer(style);
 
                         mapboxMap.addOnMapClickListener(MapboxLive.this);
+
+                        startButton = findViewById(R.id.btnStart);
+                        startButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                boolean simulateRoute = true;
+                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                        .directionsRoute(currentRoute)
+                                        .shouldSimulateRoute(simulateRoute)
+                                        .build();
+// Call this method with Context from within an Activity
+                                NavigationLauncher.startNavigation(MapboxLive.this, options);
+                            }
+                        });
                     }
                 });
     }
@@ -207,6 +220,8 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
 
         getRoute(originPoint, destinationPoint);
 
+        startButton.setEnabled(true);
+        startButton.setBackgroundResource(R.color.mapboxBlue);
 
         return true;
     }
