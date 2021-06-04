@@ -25,4 +25,5 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="user_location_permission_explanation">This app needs location permissions to show its functionality.</string>
     <string name="user_location_permission_not_granted">You didn\'t grant location permissions.</string>
+    <string name="start_navigation">Start Navigation</string>
 </resources>

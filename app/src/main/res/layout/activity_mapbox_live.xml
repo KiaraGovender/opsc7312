@@ -14,7 +14,21 @@
         android:layout_height="match_parent"
         mapbox:mapbox_cameraTargetLat="-29.883333"
         mapbox:mapbox_cameraTargetLng="31.049999"
-        mapbox:mapbox_cameraZoom="12" />
+        mapbox:mapbox_cameraZoom="12"
+        />
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:enabled="false"
+        android:text="@string/start_navigation"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:layout_constraintStart_toStartOf="parent" />
 
     <!-- styles: dark-v9 / traffic-day-v2 / traffic-night-v2 -->
 
