@@ -5,7 +5,7 @@
 
         <item
             android:id="@+id/nav_MapMain"
-            android:icon="@drawable/ic_baseline_map_24"
+            android:icon="@drawable/ic_baseline_home_24"
             android:title="Home"/>
 
         <item
@@ -22,6 +22,11 @@
             android:id="@+id/nav_Favorites"
             android:icon="@drawable/ic_baseline_star_24"
             android:title="Favorites"/>
+
+        <item
+            android:id="@+id/nav_Search"
+            android:icon="@drawable/ic_baseline_location_searching_24"
+            android:title="Search"/>
 
     </group>
 
