@@ -2,7 +2,6 @@ package com.demoapp.opsc7312task2;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -29,6 +28,7 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -38,9 +38,8 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
-import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener;
+import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker;
+import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
@@ -78,6 +77,9 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     private DirectionsRoute currentRoute;
     private static final String TAG = "DirectionsActivity";
     private NavigationMapRoute navigationMapRoute;
+
+
+    private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -207,7 +209,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapboxLive.this.map = mapboxMap;
 
-        mapboxMap.setStyle(Style.OUTDOORS,
+        mapboxMap.setStyle(Style.MAPBOX_STREETS,
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
@@ -233,6 +235,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                 iconIgnorePlacement(true)
         );
         loadedMapStyle.addLayer(destinationSymbolLayer);
+
     }
 
     // get user location
@@ -280,6 +283,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     @Override
     // adding a marker to the map
     public boolean onMapClick(@NonNull LatLng point) {
+        Intent data = new Intent();
         Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
@@ -294,7 +298,32 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         startButton.setEnabled(true);
         startButton.setBackgroundResource(R.color.mapboxBlue);
 
+        Intent intent = new PlacePicker.IntentBuilder()
+                .accessToken(Mapbox.getAccessToken())
+                .placeOptions(
+                        PlacePickerOptions.builder()
+                                .statingCameraPosition(
+                                        new CameraPosition.Builder()
+                                                .target(new LatLng(destinationPoint.latitude(),destinationPoint.longitude()))
+                                                .zoom(25)
+                                                .build())
+                                .build())
+                .build(this);
+        startActivityForResult(intent, PLACE_SELECTION_REQUEST_CODE);
+
         return true;
+    }
+
+    // retrieving information about user's location
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) { super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PLACE_SELECTION_REQUEST_CODE && resultCode == RESULT_OK){
+
+            // Retrieve the information from the selected location's CarmenFeature
+
+            CarmenFeature carmenFeature = PlacePicker.getPlace(data);
+        }
     }
 
     // method to get route (calculates best route from user destination to marker)
@@ -378,6 +407,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                     });
         }
     }
+
 
     //points of interest
 
