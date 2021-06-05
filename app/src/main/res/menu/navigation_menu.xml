@@ -6,7 +6,7 @@
         <item
             android:id="@+id/nav_MapMain"
             android:icon="@drawable/ic_baseline_map_24"
-            android:title="Map"/>
+            android:title="Home"/>
 
         <item
             android:id="@+id/nav_MapBox"

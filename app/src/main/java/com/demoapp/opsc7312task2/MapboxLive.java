@@ -2,19 +2,30 @@ package com.demoapp.opsc7312task2;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-import com.mapbox.android.core.location.LocationEngine;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -27,6 +38,9 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.PlaceAutocomplete;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceAutocompleteFragment;
+import com.mapbox.mapboxsdk.plugins.places.autocomplete.ui.PlaceSelectionListener;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
@@ -48,6 +62,14 @@ import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
 public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener
 {
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private FirebaseAuth mAuth;
+    FirebaseUser currentUser;
+    UserSettings userSettings;
+
+    String directionsCriteria;
+
+
     private MapView mapView;
     private MapboxMap map;
     private Button startButton;
@@ -66,7 +88,69 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         mapView = (MapView) findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
+        DatabaseReference myRef = database.getReference(mAuth.getCurrentUser().getUid());
+
+
+        startButton = findViewById(R.id.btnStart);
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean simulateRoute = true;
+                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                        .directionsRoute(currentRoute)
+                        .shouldSimulateRoute(simulateRoute)
+                        .build();
+                NavigationLauncher.startNavigation(MapboxLive.this, options);
+            }
+        });
+
+        // checking database if user settings exist
+        myRef.child("Settings").addValueEventListener(new ValueEventListener()
+        {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                userSettings = snapshot.getValue(UserSettings.class);
+
+                if (userSettings != null)
+                {
+                    try
+                    {
+                        if (userSettings.getUnitSetting().equals("Metric"))
+                        {
+                            directionsCriteria = "METRIC";
+                        }
+                        if (userSettings.getUnitSetting().equals("Imperial"))
+                        {
+                            directionsCriteria = "IMPERIAL";
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.makeText(MapboxLive.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    //If unitSetting has not been selected
+                    directionsCriteria = "METRIC";
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Toast.makeText(MapboxLive.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 
     // mapbox methods
     @Override
@@ -132,19 +216,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
 
                         mapboxMap.addOnMapClickListener(MapboxLive.this);
 
-                        startButton = findViewById(R.id.btnStart);
-                        startButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                boolean simulateRoute = true;
-                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                        .directionsRoute(currentRoute)
-                                        .shouldSimulateRoute(simulateRoute)
-                                        .build();
-// Call this method with Context from within an Activity
-                                NavigationLauncher.startNavigation(MapboxLive.this, options);
-                            }
-                        });
                     }
                 });
     }
@@ -226,40 +297,90 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         return true;
     }
 
-    // method to get route
+    // method to get route (calculates best route from user destination to marker)
     private void getRoute(Point origin, Point destination) {
-        NavigationRoute.builder(this)
-                .accessToken(Mapbox.getAccessToken())
-                .origin(origin)
-                .destination(destination)
-                .build()
-                .getRoute(new Callback<DirectionsResponse>() {
-                    @Override
-                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                        Log.d(TAG, "Response code: " + response.code());
-                        if (response.body() == null) {
-                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
-                            return;
-                        } else if (response.body().routes().size() < 1) {
-                            Log.e(TAG, "No routes found");
-                            return;
+        if(directionsCriteria == "METRIC")
+        {
+            NavigationRoute.builder(this)
+                    .accessToken(Mapbox.getAccessToken())
+                    .voiceUnits(DirectionsCriteria.METRIC)
+                    .origin(origin)
+                    .destination(destination)
+                    .build()
+                    .getRoute(new Callback<DirectionsResponse>()
+                    {
+                        @Override
+                        public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                            // You can get the generic HTTP info about the response
+                            Log.d(TAG, "Response code: " + response.code());
+                            if (response.body() == null) {
+                                Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                                return;
+                            } else if (response.body().routes().size() < 1) {
+                                Log.e(TAG, "No routes found");
+                                return;
+                            }
+
+                            currentRoute = response.body().routes().get(0);
+
+                            // Draw the route on the map
+                            if (navigationMapRoute != null) {
+                                navigationMapRoute.removeRoute();
+                            } else {
+                                navigationMapRoute = new NavigationMapRoute(null, mapView, map, R.style.NavigationMapRoute);
+                            }
+                            navigationMapRoute.addRoute(currentRoute);
                         }
 
-                        currentRoute = response.body().routes().get(0);
-                        if (navigationMapRoute != null) {
-                            navigationMapRoute.removeRoute();
-                        } else {
-                            navigationMapRoute = new NavigationMapRoute(null, mapView, map, R.style.NavigationMapRoute);
+                        @Override
+                        public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                            Log.e(TAG, "Error: " + throwable.getMessage());
                         }
-                        navigationMapRoute.addRoute(currentRoute);
-                    }
+                    });
+        }
+        else
+        {
+            NavigationRoute.builder(this)
+                    .accessToken(Mapbox.getAccessToken())
+                    .voiceUnits(DirectionsCriteria.IMPERIAL)
+                    .origin(origin)
+                    .destination(destination)
+                    .build()
+                    .getRoute(new Callback<DirectionsResponse>()
+                    {
+                        @Override
+                        public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+                            // You can get the generic HTTP info about the response
+                            Log.d(TAG, "Response code: " + response.code());
+                            if (response.body() == null) {
+                                Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                                return;
+                            } else if (response.body().routes().size() < 1) {
+                                Log.e(TAG, "No routes found");
+                                return;
+                            }
 
-                    @Override
-                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                        Log.e(TAG, "Error: " + throwable.getMessage());
-                    }
-                });
+                            currentRoute = response.body().routes().get(0);
+
+                            // Draw the route on the map
+                            if (navigationMapRoute != null) {
+                                navigationMapRoute.removeRoute();
+                            } else {
+                                navigationMapRoute = new NavigationMapRoute(null, mapView, map, R.style.NavigationMapRoute);
+                            }
+                            navigationMapRoute.addRoute(currentRoute);
+                        }
+
+                        @Override
+                        public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                            Log.e(TAG, "Error: " + throwable.getMessage());
+                        }
+                    });
+        }
     }
+
+    //points of interest
+
 
     // methods end
 }
