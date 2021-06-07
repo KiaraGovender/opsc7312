@@ -12,6 +12,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -59,7 +62,7 @@ import android.view.View;
 import android.widget.Button;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 
-public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener
+public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener, FavouritesDialog.FavouriteDialogListener
 {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth mAuth;
@@ -67,16 +70,20 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     UserSettings userSettings;
     String directionsCriteria;
 
+    UserFavorites userFavorites;
 
     private MapView mapView;
     private MapboxMap map;
     private Button startButton;
+    private FloatingActionButton favButton;
     private PermissionsManager permissionsManager;
     private LocationComponent locationComponent;
     private DirectionsRoute currentRoute;
     private static final String TAG = "DirectionsActivity";
     private NavigationMapRoute navigationMapRoute;
-
+    private Double lat = 0.0;
+    private Double lng = 0.0;
+    private String fav;
 
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
 
@@ -94,7 +101,16 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         currentUser = mAuth.getCurrentUser();
         DatabaseReference myRef = database.getReference(mAuth.getCurrentUser().getUid());
 
+        // favourites button
+        favButton = findViewById(R.id.btnFavourites);
+        favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openDialog();
+            }
+        });
 
+        // start navigation button
         startButton = findViewById(R.id.btnStart);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,6 +165,42 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                 Toast.makeText(MapboxLive.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void openDialog(){
+        FavouritesDialog favouritesDialog = new FavouritesDialog();
+        favouritesDialog.show(getSupportFragmentManager(),"favourite dialog");
+    }
+
+    public void applyTexts(String favourite) {
+        fav = favourite;
+        try
+        {
+            userFavorites = new UserFavorites(fav, lat, lng);
+            DatabaseReference myRef = database.getReference(mAuth.getCurrentUser().getUid());
+            myRef.child("Favourites").push().setValue(userFavorites)
+                    .addOnSuccessListener(new OnSuccessListener<Void>()
+                    {
+                        @Override
+                        public void onSuccess(Void aVoid)
+                        {
+                            Toast.makeText(MapboxLive.this, "New Favourite Location successfully saved", Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener()
+                    {
+                        @Override
+                        public void onFailure(@NonNull Exception e)
+                        {
+                            Toast.makeText(MapboxLive.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+        }
+        catch (Exception ex)
+        {
+            Toast.makeText(MapboxLive.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -304,6 +356,17 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
 
+
+        lat = destinationPoint.latitude();
+        lng = destinationPoint.longitude();
+
+        //UserFavorites tempFav = new UserFavorites();
+        //tempFav.latitude = lat;
+        //tempFav.longitude = lng;
+
+       // userFavorites.latitude = lat;
+       // userFavorites.longitude = lng;
+
         GeoJsonSource source = map.getStyle().getSourceAs("destination-source-id");
         if (source != null) {
             source.setGeoJson(Feature.fromGeometry(destinationPoint));
@@ -313,6 +376,8 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
 
         startButton.setEnabled(true);
         startButton.setBackgroundResource(R.color.mapboxBlue);
+        favButton.setEnabled(true);
+        favButton.setBackgroundResource(R.color.mapbox_plugins_green);
 
         /** CODE ATTRIBUTION
          *  Places plugin for Android, mapbox.com.
@@ -356,6 +421,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
      * **/
     // method to get route (calculates best route from user destination to marker)
     private void getRoute(Point origin, Point destination) {
+        // use the metric measurement system
         if(directionsCriteria == "METRIC")
         {
             NavigationRoute.builder(this)
@@ -394,6 +460,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                         }
                     });
         }
+        // using other (IMPERIAL) measurement system
         else
         {
             NavigationRoute.builder(this)

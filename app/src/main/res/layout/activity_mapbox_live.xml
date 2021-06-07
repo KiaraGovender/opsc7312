@@ -12,8 +12,27 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        mapbox:mapbox_cameraZoom="12"
-        />
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        mapbox:layout_constraintBottom_toBottomOf="parent"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:mapbox_cameraZoom="12">
+
+    </com.mapbox.mapboxsdk.maps.MapView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnFavourites"
+        android:layout_width="56dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:contentDescription="TODO"
+        android:enabled="false"
+        mapbox:layout_constraintBottom_toTopOf="@+id/btnStart"
+        mapbox:layout_constraintEnd_toEndOf="parent"
+        mapbox:rippleColor="#A4FFFFFF"
+        mapbox:srcCompat="@drawable/ic_baseline_star_24" />
 
     <Button
         android:id="@+id/btnStart"
