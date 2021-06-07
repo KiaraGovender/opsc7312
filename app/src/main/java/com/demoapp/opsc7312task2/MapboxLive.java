@@ -360,13 +360,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         lat = destinationPoint.latitude();
         lng = destinationPoint.longitude();
 
-        //UserFavorites tempFav = new UserFavorites();
-        //tempFav.latitude = lat;
-        //tempFav.longitude = lng;
-
-       // userFavorites.latitude = lat;
-       // userFavorites.longitude = lng;
-
         GeoJsonSource source = map.getStyle().getSourceAs("destination-source-id");
         if (source != null) {
             source.setGeoJson(Feature.fromGeometry(destinationPoint));
