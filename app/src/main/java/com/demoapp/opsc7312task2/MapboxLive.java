@@ -65,7 +65,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     UserSettings userSettings;
-
     String directionsCriteria;
 
 
@@ -205,6 +204,11 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     }
 
 
+    // initialising map
+    /** CODE ATTRIBUTION
+     *  Build a navigation app for Android, mapbox.com.
+     * https://docs.mapbox.com/help/tutorials/android-navigation-sdk/
+     * **/
     @Override
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapboxLive.this.map = mapboxMap;
@@ -222,6 +226,10 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                 });
     }
 
+    /** CODE ATTRIBUTION
+     *  Build a navigation app for Android, mapbox.com.
+     * https://docs.mapbox.com/help/tutorials/android-navigation-sdk/
+     * **/
     // add marker on click
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
         loadedMapStyle.addImage("destination-icon-id",
@@ -238,6 +246,10 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
 
     }
 
+    /** CODE ATTRIBUTION
+     *  Build a navigation app for Android, mapbox.com.
+     * https://docs.mapbox.com/help/tutorials/android-navigation-sdk/
+     * **/
     // get user location
     @SuppressLint("MissingPermission")
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
@@ -280,6 +292,10 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         }
     }
 
+    /** CODE ATTRIBUTION
+     *  Build a navigation app for Android, mapbox.com.
+     * https://docs.mapbox.com/help/tutorials/android-navigation-sdk/
+     * **/
     @Override
     // adding a marker to the map
     public boolean onMapClick(@NonNull LatLng point) {
@@ -298,6 +314,10 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         startButton.setEnabled(true);
         startButton.setBackgroundResource(R.color.mapboxBlue);
 
+        /** CODE ATTRIBUTION
+         *  Places plugin for Android, mapbox.com.
+         * https://docs.mapbox.com/android/plugins/guides/places/
+         * **/
         Intent intent = new PlacePicker.IntentBuilder()
                 .accessToken(Mapbox.getAccessToken())
                 .placeOptions(
@@ -314,6 +334,10 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         return true;
     }
 
+    /** CODE ATTRIBUTION
+     *  Places plugin for Android, mapbox.com.
+     * https://docs.mapbox.com/android/plugins/guides/places/
+     * **/
     // retrieving information about user's location
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) { super.onActivityResult(requestCode, resultCode, data);
@@ -326,6 +350,10 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         }
     }
 
+    /** CODE ATTRIBUTION
+     *  Build a navigation app for Android, mapbox.com.
+     * https://docs.mapbox.com/help/tutorials/android-navigation-sdk/
+     * **/
     // method to get route (calculates best route from user destination to marker)
     private void getRoute(Point origin, Point destination) {
         if(directionsCriteria == "METRIC")
@@ -340,7 +368,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                     {
                         @Override
                         public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                            // You can get the generic HTTP info about the response
                             Log.d(TAG, "Response code: " + response.code());
                             if (response.body() == null) {
                                 Log.e(TAG, "No routes found, make sure you set the right user and access token.");
@@ -379,7 +406,6 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                     {
                         @Override
                         public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                            // You can get the generic HTTP info about the response
                             Log.d(TAG, "Response code: " + response.code());
                             if (response.body() == null) {
                                 Log.e(TAG, "No routes found, make sure you set the right user and access token.");
@@ -407,10 +433,5 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                     });
         }
     }
-
-
-    //points of interest
-
-
     // methods end
 }
