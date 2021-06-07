@@ -117,6 +117,12 @@ public class Mapmain extends AppCompatActivity implements View.OnClickListener, 
                         //Toast.LENGTH_SHORT).show();
                 break;
 
+            case R.id.nav_Search:
+                helper.openIntent(this, Search.class);
+                //Toast.makeText(this, "Downloaded Maps still in development!",
+                //Toast.LENGTH_SHORT).show();
+                break;
+
             case R.id.nav_DownloadedMaps:
                 helper.openIntent(this, DownloadedMaps.class);
                 //Toast.makeText(this, "Downloaded Maps still in development!",
