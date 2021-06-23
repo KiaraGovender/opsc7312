@@ -43,6 +43,7 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.plugins.places.picker.PlacePicker;
 import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
+import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
@@ -69,6 +70,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     FirebaseUser currentUser;
     UserSettings userSettings;
     String directionsCriteria;
+    boolean trafficSetting;
 
     UserFavorites userFavorites;
 
@@ -145,6 +147,16 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                         {
                             directionsCriteria = "IMPERIAL";
                         }
+
+                        if (userSettings.getTraffic().equals("true"))
+                        {
+                            trafficSetting = true;
+                        }
+                        else
+                        {
+                            trafficSetting = false;
+                        }
+
 
                     }
                     catch (Exception ex)
@@ -273,6 +285,14 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                         addDestinationIconSymbolLayer(style);
 
                         mapboxMap.addOnMapClickListener(MapboxLive.this);
+
+                        /** CODE ATTRIBUTION
+                         *  Traffic, mapbox.com.
+                         * https://docs.mapbox.com/android/plugins/guides/traffic/
+                         * **/
+                        // adding a real time traffic layer to the map
+                        TrafficPlugin trafficPlugin = new TrafficPlugin(mapView, mapboxMap, style);
+                        trafficPlugin.setVisibility(trafficSetting);
 
                     }
                 });
