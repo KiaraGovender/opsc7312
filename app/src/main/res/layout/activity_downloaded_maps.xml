@@ -1,20 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".DownloadedMaps">
 
-    <TextView
-        android:id="@+id/tvDownloadedMaps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Downloaded Maps"
-        android:textSize="40sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        mapbox:mapbox_cameraTargetLat="38.9098"
+        mapbox:mapbox_cameraTargetLng="-77.0295"
+        mapbox:mapbox_cameraZoom="12"
+        mapbox:mapbox_cameraZoomMin="8"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:id="@+id/bottom_navigation"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/BlueGreen"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:paddingTop="3dp">
+
+        <Button
+            android:id="@+id/download_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:clickable="true"
+            android:drawableTop="@drawable/ic_baseline_get_app_24"
+            android:text="Download"
+            android:textAllCaps="false"
+            android:textColor="@color/mapboxWhite"
+            android:textSize="12sp"/>
+
+        <Button
+            android:id="@+id/list_button"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:drawableTop="@drawable/ic_baseline_list_24"
+            android:text="List"
+            android:textAllCaps="false"
+            android:textColor="@color/mapboxWhite"
+            android:textSize="12sp"/>
+
+    </LinearLayout>
+</RelativeLayout>
