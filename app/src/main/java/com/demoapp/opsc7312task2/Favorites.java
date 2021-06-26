@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -16,6 +18,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
+import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +29,7 @@ public class Favorites extends AppCompatActivity
 {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     private FirebaseAuth mAuth;
+    private Button navigateButton;
     FirebaseUser currentUser;
     UserFavorites userFavorites, items;
 
@@ -82,6 +87,14 @@ public class Favorites extends AppCompatActivity
             public void onCancelled(@NonNull DatabaseError error)
             {
                 Toast.makeText(Favorites.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        navigateButton =  findViewById(R.id.btnNavigate);
+        navigateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(Favorites.this, "Feature in development", Toast.LENGTH_SHORT).show();
             }
         });
     }

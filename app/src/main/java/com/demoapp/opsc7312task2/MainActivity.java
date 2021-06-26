@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 
+import com.mapbox.search.MapboxSearchSdk;
+import com.mapbox.search.location.DefaultLocationProvider;
+
 public class MainActivity extends AppCompatActivity
 {
     Button login, signup;
@@ -13,6 +16,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
+
+        MapboxSearchSdk.initialize(this.getApplication(), getString(R.string.access_token),
+                new DefaultLocationProvider(this.getApplication()));
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 

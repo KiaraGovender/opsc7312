@@ -29,6 +29,10 @@ import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.MultiPoint;
+import com.mapbox.geojson.MultiPolygon;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
@@ -46,6 +50,14 @@ import com.mapbox.mapboxsdk.plugins.places.picker.model.PlacePickerOptions;
 import com.mapbox.mapboxsdk.plugins.traffic.TrafficPlugin;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.search.CategorySearchEngine;
+import com.mapbox.search.CategorySearchOptions;
+import com.mapbox.search.MapboxSearchSdk;
+import com.mapbox.search.ResponseInfo;
+import com.mapbox.search.SearchCallback;
+import com.mapbox.search.SearchRequestTask;
+import com.mapbox.search.location.DefaultLocationProvider;
+import com.mapbox.search.result.SearchResult;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
@@ -53,6 +65,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -69,10 +82,11 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     UserSettings userSettings;
-    String directionsCriteria;
+    String directionsCriteria, selectedLandmark;
     boolean trafficSetting;
 
     UserFavorites userFavorites;
+    UserLandmarks userLandmarks;
 
     private MapView mapView;
     private MapboxMap map;
@@ -89,6 +103,12 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
 
     private static final int PLACE_SELECTION_REQUEST_CODE = 56789;
 
+    private CategorySearchEngine categorySearchEngine;
+    private SearchRequestTask searchRequestTask;
+
+    private static final String SOURCE_ID = "SOURCE_ID";
+    private static final String ICON_ID = "ICON_ID";
+    private static final String LAYER_ID = "LAYER_ID";
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -103,6 +123,18 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
         currentUser = mAuth.getCurrentUser();
         DatabaseReference myRef = database.getReference(mAuth.getCurrentUser().getUid());
 
+
+        //MapboxSearchSdk.initialize(this.getApplication(), getString(R.string.access_token),
+              //  new DefaultLocationProvider(this.getApplication()));
+
+        categorySearchEngine = MapboxSearchSdk.createCategorySearchEngine();
+
+        final CategorySearchOptions options = new CategorySearchOptions.Builder()
+                .limit(5)
+                .build();
+
+        searchRequestTask = categorySearchEngine.search("Food", options, searchCallback);
+
         // favourites button
         favButton = findViewById(R.id.btnFavourites);
         favButton.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +143,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                 openDialog();
             }
         });
+
 
         // start navigation button
         startButton = findViewById(R.id.btnStart);
@@ -169,6 +202,40 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                     //If unitSetting has not been selected
                     directionsCriteria = "METRIC";
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error)
+            {
+                Toast.makeText(MapboxLive.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        myRef.child("Landmarks").addValueEventListener(new ValueEventListener()
+        {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot)
+            {
+                userLandmarks = snapshot.getValue(UserLandmarks.class);
+
+                if (userLandmarks != null)
+                {
+                    selectedLandmark = userLandmarks.getPreferredLandmark();
+
+                    try
+                    {
+                        if(selectedLandmark != null && !selectedLandmark.equals("All"))
+                         {
+                            searchRequestTask = categorySearchEngine.search(selectedLandmark, options, searchCallback);
+                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.makeText(MapboxLive.this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
             }
 
             @Override
@@ -258,6 +325,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     {
         super.onDestroy();
         mapView.onDestroy();
+        searchRequestTask.cancel();
     }
 
     @Override
@@ -277,25 +345,25 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         MapboxLive.this.map = mapboxMap;
 
-        mapboxMap.setStyle(Style.MAPBOX_STREETS,
-                new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
-                        enableLocationComponent(style);
-                        addDestinationIconSymbolLayer(style);
+       mapboxMap.setStyle(Style.MAPBOX_STREETS,
+                 new Style.OnStyleLoaded() {
+                     @Override
+                     public void onStyleLoaded(@NonNull Style style) {
+                         enableLocationComponent(style);
+                         addDestinationIconSymbolLayer(style);
 
-                        mapboxMap.addOnMapClickListener(MapboxLive.this);
+                         mapboxMap.addOnMapClickListener(MapboxLive.this);
 
-                        /** CODE ATTRIBUTION
-                         *  Traffic, mapbox.com.
-                         * https://docs.mapbox.com/android/plugins/guides/traffic/
-                         * **/
-                        // adding a real time traffic layer to the map
-                        TrafficPlugin trafficPlugin = new TrafficPlugin(mapView, mapboxMap, style);
-                        trafficPlugin.setVisibility(trafficSetting);
+                         /** CODE ATTRIBUTION
+                          *  Traffic, mapbox.com.
+                          * https://docs.mapbox.com/android/plugins/guides/traffic/
+                          * **/
+                         // adding a real time traffic layer to the map
+                         TrafficPlugin trafficPlugin = new TrafficPlugin(mapView, mapboxMap, style);
+                         trafficPlugin.setVisibility(trafficSetting);
 
-                    }
-                });
+                     }
+                 });
     }
 
     /** CODE ATTRIBUTION
@@ -513,5 +581,29 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
                     });
         }
     }
+
+    private final SearchCallback searchCallback = new SearchCallback()
+    {
+        @Override
+        public void onResults(@NonNull List<? extends SearchResult> results, @NonNull ResponseInfo responseInfo)
+        {
+            if (results.isEmpty())
+            {
+                Log.i("SearchApiExample", "No category search results");
+            } else {
+                Log.i("SearchApiExample", "Category search results: " + results);
+            }
+        }
+
+        @Override
+        public void onError(@NonNull Exception e)
+        {
+            Log.i("SearchApiExample", "Search error", e);
+        }
+    };
+
+
+
+
     // methods end
 }

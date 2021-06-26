@@ -1,34 +1,197 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".Favorites">
+    tools:context=".Landmarks">
 
-    <com.mapbox.search.ui.view.SearchBottomSheetView
-        android:id="@+id/search_view"
+    <LinearLayout
+        android:id="@+id/linearLandmarks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:elevation="8dp"
-        />
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <com.mapbox.search.ui.view.place.SearchPlaceBottomSheetView
-        android:id="@+id/search_place_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:elevation="8dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="Landmarks"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="40sp"
+            android:textStyle="bold" />
 
-    <com.mapbox.search.ui.view.category.SearchCategoriesBottomSheetView
-        android:id="@+id/search_categories_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal"
-        android:elevation="8dp"
-        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="_________________________________________"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/tvPreferredLandmarks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical|end"
+            android:text="Preferred Landmarks"
+            android:textColor="@color/black"
+            android:textSize="17dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="385dp"
+            android:layout_marginBottom="20dp">
+
+            <RadioGroup
+                android:id="@+id/radioGroupLandmarks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:checkedButton="@+id/radio_button_1"
+                android:orientation="vertical"
+                android:textColor="@color/black">
+
+                <RadioButton
+                    android:id="@+id/radioAll"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:checked="false"
+                    android:drawableRight="@drawable/ic_baseline_list_alt_24"
+                    android:padding="20dp"
+                    android:text="All"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioATM"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_atm_24"
+                    android:padding="20dp"
+                    android:text="ATM"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioCafe"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_local_cafe_24"
+                    android:padding="20dp"
+                    android:text="Cafe"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioFood"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:checked="false"
+                    android:drawableRight="@drawable/ic_baseline_fastfood_24"
+                    android:padding="20dp"
+                    android:text="Food"
+                    android:textColor="@color/black" /> <!-- drawable icon at the right of radio button-->
+
+                <RadioButton
+                    android:id="@+id/radioFitnessCenter"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_fitness_center_24"
+                    android:padding="20dp"
+                    android:text="Fitness Center"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioGrocery"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_local_grocery_store_24"
+                    android:padding="20dp"
+                    android:text="Grocery"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioHotel"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_hotel_24"
+                    android:padding="20dp"
+                    android:text="Hotel"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioHospital"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_local_hospital_24"
+                    android:padding="20dp"
+                    android:text="Hospital"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioParking"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_local_parking_24"
+                    android:padding="20dp"
+                    android:text="Parking"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioPolice"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_local_police_24"
+                    android:padding="20dp"
+                    android:text="Police"
+                    android:textColor="@color/black" />
+
+                <RadioButton
+                    android:id="@+id/radioRestaurant"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:checked="false"
+                    android:drawableRight="@drawable/ic_baseline_restaurant_24"
+                    android:padding="20dp"
+                    android:text="Restaurant"
+                    android:textColor="@color/black" /> <!-- drawable icon at the right of radio button-->
+
+                <RadioButton
+                    android:id="@+id/radioSchool"
+                    android:layout_width="200dp"
+                    android:layout_height="match_parent"
+                    android:drawableRight="@drawable/ic_baseline_school_24"
+                    android:padding="20dp"
+                    android:text="School"
+                    android:textColor="@color/black" />
+
+            </RadioGroup>
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/btnSaveLandmarkSetting"
+            android:layout_width="350dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="@color/BlueGreen"
+            android:text="Save"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

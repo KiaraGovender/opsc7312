@@ -30,14 +30,14 @@ public class Settings extends AppCompatActivity
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
 
-    String unitsMeasured, speedCameras, speedLimits, traffic, roadConstruction;
+    String unitsMeasured, traffic;
     //String speedCameras = "true";
     //String speedLimits = "true";
     //String traffic = "true";
     //String roadConstruction = "true";
     RadioGroup unitOfMeasurement;
     RadioButton metric, imperial, selectedUnit;
-    SwitchMaterial showCameras, showLimits, showTraffic, showConstruction;
+    SwitchMaterial showTraffic;
     Button save;
     UserSettings userSettings;
 
@@ -53,13 +53,13 @@ public class Settings extends AppCompatActivity
         unitOfMeasurement = findViewById(R.id.radioGroupUnitsOfMeasurement);
         metric = findViewById(R.id.radioMetric);
         imperial = findViewById(R.id.radioImperial);
-        showCameras = findViewById(R.id.svSpeedCameras);
-        showLimits = findViewById(R.id.svSpeedLimits);
+        //showCameras = findViewById(R.id.svSpeedCameras);
+        //showLimits = findViewById(R.id.svSpeedLimits);
         showTraffic = findViewById(R.id.svTraffic);
-        showConstruction = findViewById(R.id.svRoadConstruction);
+        //showConstruction = findViewById(R.id.svRoadConstruction);
         save = findViewById(R.id.btnSaveSettings);
 
-        showCameras.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        /*showCameras.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
@@ -91,7 +91,7 @@ public class Settings extends AppCompatActivity
                     //Toast.makeText(Settings.this, "Show SpeedLimits OFF", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
 
         showTraffic.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
@@ -110,7 +110,7 @@ public class Settings extends AppCompatActivity
             }
         });
 
-        showConstruction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+        /*showConstruction.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
         {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
             {
@@ -125,7 +125,7 @@ public class Settings extends AppCompatActivity
                     //Toast.makeText(Settings.this, "Show Road Construction OFF", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
+        });*/
 
         myRef.child("Settings").addValueEventListener(new ValueEventListener()
         {
@@ -148,7 +148,7 @@ public class Settings extends AppCompatActivity
                             imperial.setChecked(true);
                         }
 
-                        if(userSettings.getSpeedCameras().equals("true")) {
+                        /**if(userSettings.getSpeedCameras().equals("true")) {
                             showCameras.setChecked(true);
                         }
                         else{
@@ -160,7 +160,7 @@ public class Settings extends AppCompatActivity
                         }
                         else{
                             showLimits.setChecked(false);
-                        }
+                        }*/
 
                         if(userSettings.getTraffic().equals("true")) {
                             showTraffic.setChecked(true);
@@ -169,12 +169,12 @@ public class Settings extends AppCompatActivity
                             showTraffic.setChecked(false);
                         }
 
-                        if(userSettings.getRoadConstruction().equals("true")) {
+                       /**if(userSettings.getRoadConstruction().equals("true")) {
                             showConstruction.setChecked(true);
                         }
                         else{
                             showConstruction.setChecked(false);
-                        }
+                        }*/
 
                     }
                     catch (Exception ex)
@@ -223,7 +223,7 @@ public class Settings extends AppCompatActivity
                         //traffic = showLimits.toString();
                         //roadConstruction = showLimits.toString();
 
-                        userSettings = new UserSettings(unitsMeasured, speedCameras, speedLimits, traffic, roadConstruction);
+                        userSettings = new UserSettings(unitsMeasured, traffic);
 
                         DatabaseReference myRef = database.getReference(mAuth.getCurrentUser().getUid());
                         myRef.child("Settings").setValue(userSettings)

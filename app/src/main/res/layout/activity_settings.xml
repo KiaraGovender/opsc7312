@@ -125,7 +125,7 @@
                 android:textColor="@color/black"
                 android:textSize="17dp" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+           <!-- <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/svSpeedCameras"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
                 android:textColor="@color/black"
-                android:text="Speed Limits" />
+                android:text="Speed Limits" /> -->
 
             <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/svTraffic"
@@ -149,13 +149,13 @@
                 android:textColor="@color/black"
                 android:text="Traffic" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+           <!-- <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/svRoadConstruction"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginStart="50dp"
                 android:textColor="@color/black"
-                android:text="Road Construction" />
+                android:text="Road Construction" /> -->
 
         </LinearLayout>
 
