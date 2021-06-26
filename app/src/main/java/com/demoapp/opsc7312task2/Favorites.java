@@ -89,13 +89,5 @@ public class Favorites extends AppCompatActivity
                 Toast.makeText(Favorites.this, error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        navigateButton =  findViewById(R.id.btnNavigate);
-        navigateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(Favorites.this, "Feature in development", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }

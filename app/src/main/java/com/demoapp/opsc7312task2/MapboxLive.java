@@ -82,7 +82,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
     private FirebaseAuth mAuth;
     FirebaseUser currentUser;
     UserSettings userSettings;
-    String directionsCriteria, selectedLandmark;
+    String directionsCriteria;
     boolean trafficSetting;
 
     UserFavorites userFavorites;
@@ -221,7 +221,7 @@ public class MapboxLive extends AppCompatActivity implements OnMapReadyCallback,
 
                 if (userLandmarks != null)
                 {
-                    selectedLandmark = userLandmarks.getPreferredLandmark();
+                    String selectedLandmark = userLandmarks.getPreferredLandmark();
 
                     try
                     {
