@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">OPSC7312Task2</string>
+    <string name="app_name">Find My Way</string>
     <!--token for mapbox api-->
     <string name="access_token" translatable="false">pk.eyJ1Ijoia2lhcmFnb3ZlbmRlciIsImEiOiJja3BmZzVscWQwMzFlMm5tbDM1MDk3cjd1In0.1ZGjN0x12EqP4zIoFYlW2g</string>
     <string name="welcome">Welcome!</string>
